@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Note</title>
+    <style>
+    body {
+        background-image: url(https://cdn.lifehacker.ru/wp-content/uploads/2020/09/kazetachinu050_1600776049.jpg); /* Фон сайта */
+        background-size: cover; /* Растянуть на весь фон */
+        background-repeat: no-repeat;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+        }
+
+        .input-field {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .input-field-title {
+            margin-bottom: 10px;
+            border-radius: 10px;
+        }
+
+        .input-field-content {
+            height: 200px;
+            resize: none;
+            border-radius: 10px;
+        }
+
+        .button-update-note,
+        .button-cancel {
+            margin-top: 20px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .button-update-note {
+            background-color: rgb(0, 0, 205);
+        }
+
+        .button-cancel {
+            background-color: rgb(255, 0, 0);
+        }
+
+        .button-cancel:hover {
+            background-color: rgb(116, 18, 18);
+        }
+        .button-update-note:hover {
+            background-color: rgb(23, 23, 117);
+        }
+
+        .button-cancel + .button-update-note {
+            margin-left: 10px;
+        }
+
+        /* Additional styles for the 'Edit Note' page */
+        .button-delete-note,
+        .button-edit-note {
+            display: inline-block;
+            padding: 8px 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            margin-right: 5px;
+        }
+
+        .button-delete-note {
+            background-color: rgb(255, 0, 0);
+        }
+
+        .button-edit-note {
+            background-color: rgb(0, 0, 205);
+        }
+
+        .button-edit-note:hover,
+        .button-delete-note:hover {
+            background-color: #0056b3;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Edit Note</h2>
+        <form method="POST">
+            {{ csrf_token }}
+            <div class="form-group">
+                <label for="title">Title:</label>
+                <input type="text" class="input-field input-field-title" id="title" name="title" value="{{ note.notes_name }}" required>
+            </div>
+            <div class="form-group">
+                <label for="content">Content:</label>
+                <textarea name="content" class="input-field input-field-content" rows="10" required>{{ note.content }}</textarea>
+            </div>
+            <button type="submit" class="button-update-note">Update Note</button>
+            <a href="{{ url_for('home') }}" class="button button-cancel">Cancel</a>
+        </form>
+    </div>

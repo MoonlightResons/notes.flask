@@ -1,0 +1,298 @@
+{% extends 'base.html' %}
+
+{% block title %}Мои Заметки{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-image: url(https://kartinki.pibig.info/uploads/posts/2023-04/1680340892_kartinki-pibig-info-p-krasivie-kartinki-zhivie-oboi-arti-1.jpg); /* Фон сайта */
+        background-size: cover; /* Растянуть на весь фон */
+        background-repeat: no-repeat;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    .header {
+        background-color: rgb(245, 255, 250, 0);
+        padding: 10px;
+        color: rgb(160, 82, 45);
+        text-align: center;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 50px auto;
+    }
+
+    .note {
+        background-color: white;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        position: relative;
+    }
+
+    .note-title {
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .note-content {
+        margin-bottom: 20px;
+    }
+
+    .button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        color: white;
+        margin-right: 10px;
+    }
+
+    .button-delete {
+        background-color: rgb(255, 0, 0);
+    }
+
+    .button-delete:hover {
+        background-color: rgb(116, 18, 18);
+    }
+    .button-update {
+        background-color: rgb(0, 0, 205);
+    }
+
+    .button-update:hover {
+        background-color: rgb(23, 23, 117);
+    }
+
+    .note-expiration {
+        color: red;
+        font-size: 14px;
+    }
+
+    .note-pin {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+        color: rgb(0, 0, 205);
+    }
+
+    .note.note-pinned {
+        background-color: rgb(30, 144, 255);
+    }
+
+    .search-container {
+        margin: 20px auto;
+        text-align: center;
+    }
+
+    .search-input {
+        padding: 5px 10px;
+        border: 1px solid rgb(0, 0, 0);
+        border-radius: 5px;
+    }
+
+    .search-button {
+        padding: 5px 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: rgb(0, 0, 205);
+        color: white;
+        cursor: pointer;
+    }
+
+</style>
+<div class="search-container">
+    <form action="{{ url_for('search_notes') }}" method="GET">
+        <input type="text" name="title" class="search-input" placeholder="Поиск по названию">
+        <button type="submit" class="search-button">Поиск</button>
+    </form>
+</div>
+
+<div class="container" id="notesContainer">
+    <h1>My Notes</h1>
+    {% for note in notes %}
+    <div class="note {% if note.pinned %}note-pinned{% endif %}">
+        <span class="note-pin" data-note-id="{{ note.id }}" onclick="togglePin('{{ note.id }}', '{{ note.pinned|lower }}' )">
+            {% if note.pinned %}
+            📌
+            {% else %}
+            📍
+            {% endif %}
+        </span>
+        <div class="note-title">{{ note.notes_name }}</div>
+        <div class="note-content">{{ note.content }}</div>
+        {% if note.expiration_date %}
+        <div class="note-expiration" data-expiration-date="{{ note.expiration_date.timestamp() }}">
+            {{ note.expiration_date.strftime('%Y-%m-%d %H:%M:%S') }}
+        </div>
+        {% endif %}
+        <a href="{{ url_for('edit_note', note_id=note.id) }}" class="button button-update">Update</a>
+        <form action="{{ url_for('delete_note', note_id=note.id) }}" method="POST" style="display: inline;">
+            {{ csrf_token }}
+            <input type="hidden" name="_method" value="DELETE">
+            <button type="submit" class="button button-delete">Delete</button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+    function searchNotes() {
+        const searchInput = document.querySelector('.search-input').value;
+
+        fetch(`/search_notes?title=${searchInput}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const notesContainer = document.getElementById('notesContainer');
+            notesContainer.innerHTML = '';
+
+            data.forEach(note => {
+                const noteElement = createNoteElement(note);
+                notesContainer.appendChild(noteElement);
+            });
+        })
+        .catch(error => {
+            console.error('Ошибка при поиске заметок:', error);
+        });
+    }
+
+function createNoteElement(note) {
+    const noteDiv = document.createElement('div');
+    noteDiv.classList.add('note');
+
+    if (note.pinned) {
+        noteDiv.classList.add('note-pinned');
+    }
+
+    const pinSpan = document.createElement('span');
+    pinSpan.classList.add('note-pin');
+    pinSpan.setAttribute('data-note-id', note.id);
+    pinSpan.onclick = () => togglePin(note.id, note.pinned);
+
+    if (note.pinned) {
+        pinSpan.textContent = '📌';
+    } else {
+        pinSpan.textContent = '📍';
+    }
+
+    noteDiv.appendChild(pinSpan);
+
+    const noteTitleDiv = document.createElement('div');
+    noteTitleDiv.classList.add('note-title');
+    noteTitleDiv.textContent = note.notes_name;
+    noteDiv.appendChild(noteTitleDiv);
+
+    const noteContentDiv = document.createElement('div');
+    noteContentDiv.classList.add('note-content');
+    noteContentDiv.textContent = note.content;
+    noteDiv.appendChild(noteContentDiv);
+
+    if (note.expiration_date) {
+        const expirationDiv = document.createElement('div');
+        expirationDiv.classList.add('note-expiration');
+        const expirationTimestamp = note.expiration_date.timestamp ? note.expiration_date.timestamp() : NaN;
+        if (!isNaN(expirationTimestamp)) {
+            expirationDiv.setAttribute('data-expiration-date', expirationTimestamp);
+            expirationDiv.textContent = note.expiration_date.strftime('%Y-%m-%d %H:%M:%S');
+            noteDiv.appendChild(expirationDiv);
+        }
+    }
+
+    const updateLink = document.createElement('a');
+    updateLink.classList.add('button', 'button-update');
+    updateLink.href = `/edit_note/${note.id}`;
+    updateLink.textContent = 'Update';
+    noteDiv.appendChild(updateLink);
+
+    const deleteButton = document.createElement('button');
+    deleteButton.classList.add('button', 'button-delete');
+    deleteButton.textContent = 'Delete';
+    deleteButton.onclick = () => deleteNote(note.id);
+    noteDiv.appendChild(deleteButton);
+
+    return noteDiv;
+}
+
+
+
+    document.querySelector('.search-button').addEventListener('click', function (event) {
+        event.preventDefault();
+        searchNotes();
+    });
+
+function togglePin(noteId, pinned) {
+    const noteElement = document.querySelector(`[data-note-id="${noteId}"]`);
+
+    if (!noteElement) {
+        console.error(`Элемент с data-note-id="${noteId}" не найден в DOM.`);
+        return;
+    }
+
+    fetch(`/pin_note/${noteId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            pinned: !pinned
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success) {
+            alert(data.message);
+        } else {
+            if (data.pinned) {
+                const container = document.querySelector('.container');
+                container.insertBefore(noteElement, container.firstChild); 
+                noteElement.classList.add('note-pinned');
+            } else {
+                const container = document.querySelector('.container');
+                container.appendChild(noteElement); 
+                noteElement.classList.remove('note-pinned');
+            }
+            location.reload();
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка при закреплении заметки:', error);
+    });
+}
+
+
+function updateTimers() {
+            const expirationElements = document.querySelectorAll('.note-expiration');
+            expirationElements.forEach((element) => {
+                const expirationDate = new Date(parseInt(element.dataset.expirationDate) * 1000);
+                const now = new Date();
+
+                if (now >= expirationDate) {
+                    element.textContent = 'Note expired';
+                } else {
+                    const diff = Math.floor((expirationDate - now) / 1000); // difference in seconds
+                    const days = Math.floor(diff / (60 * 60 * 24));
+                    const hours = Math.floor((diff % (60 * 60 * 24)) / (60 * 60));
+                    const minutes = Math.floor((diff % (60 * 60)) / 60);
+                    const seconds = diff % 60;
+
+                    element.textContent = `Note expires in ${days} days, ${hours} hours, ${minutes} minutes, and ${seconds} seconds`;
+            }
+        });
+    }
+
+
+  // Обновление таймеров каждую секунду
+  setInterval(updateTimers, 1000);
+</script>
+
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}Registration Form{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-image: url(https://kartinkin.net/pics/uploads/posts/2022-08/1659870118_1-kartinkin-net-p-anime-peizazhi-na-rabochii-stol-krasivo-1.jpg); /* Фон сайта */
+        background-size: cover; /* Растянуть на весь фон */
+        background-repeat: no-repeat;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    .header {
+        background-color: rgb(245, 255, 250, 0); /* Цвет хедера */
+        padding: 10px;
+        color: rgb(0, 0, 0); /* Цвет текста в хедере */
+        text-align: center;
+    }
+
+    .container {
+        max-width: 400px;
+        margin: 50px auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    button {
+        background-color: rgb(160, 82, 45);
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .button-login {
+        background-color: rgb(160, 82, 45);
+    }
+
+    .button-register {
+        background-color: rgb(160, 82, 45);
+    }
+
+    .button-login:hover {
+        background-color: #68361f;
+    }
+
+    .button-register:hover {
+        background-color: #68361f;
+    }
+
+    button:hover {
+        background-color: #68361f;
+    }
+
+</style>
+
+<body>
+<div class="header">
+    <h1>Registration</h1>
+</div>
+<div class="container">
+  <h2>Registration Form</h2>
+    {% with messages = get_flashed_messages() %}
+{% if messages and 'email' in messages[0] %}
+    <div class="notification is-danger">
+        {{ messages[0] }}. Go to <a href="{{ url_for('login') }}">login page</a>.
+    </div>
+{% endif %}
+{% endwith %}
+ <form action="" method="post">
+  <div class="form-group">
+    <label for="name">Username</label>
+    <input type="text" class="form-control" id="exampleInputfirstname" name="username">
+  </div>
+  <div class="form-group">
+    <label for="Email1">Email address</label>
+    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email">
+  </div>
+  <div class="form-group">
+    <label for="Password">Password</label>
+    {% with messages = get_flashed_messages() %}
+{% if messages and 'password' in messages[0] %}
+    <div class="notification is-danger">
+        {{ messages[0] }}
+    </div>
+{% endif %}
+{% endwith %}
+    <input type="password" class="form-control" id="exampleInputPassword" name="password">
+  </div>
+  <button type="submit" class="btn btn-primary" name="create">Sign up</button>
+</form>
+</div>
+{% endblock %}

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create New Note</title>
+    <style>
+    body {
+        background-image: url(https://cdn.lifehacker.ru/wp-content/uploads/2020/09/kazetachinu050_1600776049.jpg); /* Фон сайта */
+        background-size: cover; /* Растянуть на весь фон */
+        background-repeat: no-repeat;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+        }
+
+        .input-field {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .input-field-title {
+            margin-bottom: 10px;
+            border-radius: 10px;
+        }
+
+        .input-field-content {
+            height: 200px;
+            resize: none;
+            border-radius: 10px;
+        }
+
+        .button-create-note,
+        .button-cancel {
+            margin-top: 20px; /* Увеличиваем вертикальное расстояние от контента */
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            color: white;
+            text-decoration: none; /* Убираем подчеркивание текста ссылки */
+        }
+
+        .button-create-note {
+            background-color: rgb(0, 0, 205); /* Цвет кнопки Create Note */
+        }
+
+        .button-cancel {
+            background-color: rgb(255, 0, 0); /* Цвет кнопки Cancel */
+        }
+
+        .button-cancel:hover,
+        .button-create-note:hover {
+            opacity: 0.8; /* Уменьшаем немного прозрачность при наведении на обе кнопки */
+        }
+
+        .button-cancel + .button-create-note {
+            margin-left: 10px; /* Добавляем расстояние между кнопками */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Create New Note</h2>
+<!-- new_note.html -->
+
+<form action="{{ url_for('new_note') }}" method="post">
+    {{ csrf_token }}
+    <div class="form-group">
+        <label for="title">Title:</label>
+        <input type="text" class="input-field input-field-title" id="title" name="title" required>
+    </div>
+    <div class="form-group">
+        <label for="content">Content:</label>
+        <textarea name="content" class="input-field input-field-content" rows="10" required></textarea>
+    </div>
+<div>
+    <label for="days_to_delete">Days to Delete:</label>
+    <input type="number" id="days_to_delete" name="days_to_delete">
+</div>
+<div>
+    <label for="time_to_delete">Time to Delete:</label>
+    <input type="time" id="time_to_delete" name="time_to_delete">
+</div>
+    <button type="submit" class="button-create-note">Create Note</button>
+    <a href="{{ url_for('home') }}" class="button button-cancel">Cancel</a>
+</form>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}My Notes{% endblock %}
+{% block heading %}My Notes{% endblock %}
+{% block content %}
+    <ul>
+        {% for note in notes %}
+            <li>{{ note.title }}</li>
+            <p>{{ note.content }}</p>
+            <a href="#">Edit</a> | <a href="#">Delete</a>
+        {% endfor %}
+    </ul>
+{% endblock %}

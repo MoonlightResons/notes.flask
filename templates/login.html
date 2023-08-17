@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-image: url(https://kartinkin.net/pics/uploads/posts/2022-08/1659870118_1-kartinkin-net-p-anime-peizazhi-na-rabochii-stol-krasivo-1.jpg); /* Фон сайта */
+        background-size: cover; /* Растянуть на весь фон */
+        background-repeat: no-repeat;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    .header {
+        background-color: rgba(240, 230, 140, 0); 
+        padding: 10px;
+        color: rgb(0, 0, 0); /* Цвет текста в хедере */
+        text-align: center;
+    }
+
+    .container {
+        max-width: 400px;
+        margin: 50px auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .button {
+        background-color: rgb(160, 82, 45);
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .button:hover {
+        background-color: #68361f;
+    }
+</style>
+
+<body>
+<div class="header">
+    <h1>Login</h1>
+</div>
+<div class="container">
+    <h2>Login</h2>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class="notification is-danger">
+            <a>{{ messages[0] }}</a>
+        </div>
+    {% endif %}
+    {% endwith %}
+    <form method="POST" action="/login">
+        <div class='form-group'>
+            <label for="email">Email</label>
+            <input type="email" class="form-control" name="email" placeholder="Your Email">
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            {% with messages = get_flashed_messages() %}
+            {% if messages and 'password' in messages[0] %}
+            <div class="notification is-danger">
+                {{ messages[0] }}
+            </div>
+            {% endif %}
+            {% endwith %}
+            <input type="password" class="form-control" name="password" placeholder="Your Password">
+        </div>
+        <button class="button is-block is-info is-large is-fullwidth">Login</button>
+    </form>
+</div>
+{% endblock %}

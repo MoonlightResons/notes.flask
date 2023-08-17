@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile</title>
+    <style>
+    body {
+        background-image: url(https://foni.club/uploads/posts/2023-02/1676638401_foni-club-p-oboi-anime-priroda-na-kompyuter-2.jpg); /* Фон сайта */
+        background-size: cover; /* Растянуть на весь фон */
+        background-repeat: no-repeat;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+        }
+
+        .profile-info {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .note-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .note {
+        background-color: white;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        position: relative;
+    }
+
+        
+    .note-title {
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .note-content {
+        margin-bottom: 20px;
+    }
+
+        .button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            color: white;
+            margin-right: 10px;
+        }
+    
+        .button-delete {
+            background-color: rgb(255, 0, 0); /* Кнопка Delete */
+        }
+    
+        .button-update {
+            background-color: rgb(0, 0, 205); /* Кнопка Update */
+        }
+
+        .button-delete:hover {
+        background-color: rgb(116, 18, 18);
+        }
+
+
+        .button-update:hover {
+        background-color: rgb(23, 23, 117);
+        }
+
+
+        .profile-update-form {
+            margin: 30px 0;
+            display: none;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            
+        }
+
+        .profile-update-form input {
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        .profile-update-form button {
+            margin-top: 10px;
+            background-color: #007bff;
+            color: white;
+        }
+
+        .profile-data {
+            display: block;
+        }
+
+        .button-update-profile {
+            margin-top: 20px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            color: white;
+            background-color: rgb(160, 82, 45);
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+            outline: none;
+        }
+
+        .button-update-profile:hover {
+            opacity: 0.8;
+        }
+
+        .button-cancel {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            color: white;
+            background-color: rgb(255, 0, 0) !important;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+            outline: none;
+        }
+
+        .button-submit-updates {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            color: white;
+            background-color: rgb(0, 0, 205);
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+            outline: none;
+        }
+        .button-submit-updates:hover {
+            background-color: rgb(9, 9, 129);
+        }
+        .button-cancel:hover {
+            background-color: rgb(171, 6, 6);
+        }
+        .user_email,
+        .password_current {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 50px;
+            margin: 20px 0;
+        }
+        
+        .button_form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .button_form button {
+            margin: 0 20px;
+        }
+        .note-expiration {
+        color: red; /* Цвет таймера до удаления */
+        font-size: 14px;
+    }
+             .note-pin {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+        color: rgb(0, 0, 205); /* Синий цвет */
+    }
+  .note.note-pinned {
+    background-color: rgb(30, 144, 255); /* Синий цвет для закрепленных заметок */
+  }
+    </style>
+{% extends 'base.html' %}
+
+{% block title %}Profile{% endblock %}
+        
+{% block content %}
+<div class="container">
+    <!-- Весь контент профиля -->
+<div class="container">
+    <div class="profile-info">
+        <h2>Profile</h2>
+        <p class="profile-data">Username: {{ current_user.username }}</p>
+        <p class="profile-data">Email: {{ current_user.email }}</p>
+        <button class="button-update-profile" onclick="submitUpdates()">Update Profile</button>
+    </div>
+    <form action="{{ url_for('update_profile') }}" method="POST" class="profile-update-form" id="updateProfileForm">
+        <div class="user_email">
+            <div>
+                <label for="new_username">New Username:</label>
+                <input type="text" id="new_username" name="new_username" required>
+            </div>
+            <div class="">
+                <label for="new_email">New Email:</label>
+                <input type="email" id="new_email" name="new_email" required>
+            </div>
+        </div> 
+        <div class="password_current">
+            <div>
+                <label for="new_password">New Password:</label>
+                <input type="password" id="new_password" name="new_password" required>
+            </div>
+            <div>
+                <label for="current_password">Current Password:</label>
+                <input type="password" id="current_password" name="current_password" required>
+            </div>
+        </div>
+        <div class="button_form">
+            <button type="button" class="button-cancel" onclick="cancelUpdate()">Cancel</button>
+            <button type="button" class="button-submit-updates" onclick="submitUpdates()">Submit Updates</button>
+        </div>
+    </form>      
+    
+<!-- ... -->
+<h2>My Notes</h2>
+<ul class="note-list">
+    {% for note in user_notes %}
+    <li class="note {% if note.pinned %}note-pinned{% endif %}">
+        <div class="note-pin" data-note-id="{{ note.id }}" onclick="togglePin('{{ note.id }}', '{{ note.pinned|lower }}')">
+            {% if note.pinned %}📌{% else %}📍{% endif %}
+        </div>
+        <h3 class="note-title">{{ note.notes_name }}</h3>
+        <p class="note-content">{{ note.content }}</p>
+        {% if note.expiration_date %}
+        <div class="note-expiration" data-expiration-date="{{ note.expiration_date.timestamp() }}">
+            {{ note.expiration_date.strftime('%Y-%m-%d %H:%M:%S') }}
+        </div>
+        {% endif %}
+        <div>
+            <a href="{{ url_for('edit_note', note_id=note.id) }}" class="button button-update">Update</a>
+            <form action="{{ url_for('delete_note', note_id=note.id) }}" method="POST" style="display: inline;">
+                {{ csrf_token }}
+                <input type="hidden" name="_method" value="DELETE">
+                <button type="submit" class="button button-delete">Delete</button>
+            </form>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+</div>
+<script>
+function togglePin(noteId) {
+    fetch(`/pin_note/${noteId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            location.reload(); // Refresh the page after pinning/unpinning
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error while pinning/unpinning note:', error);
+    });
+}
+            function submitUpdates() {
+                var updateForm = document.getElementById('updateProfileForm');
+                updateForm.style.display = updateForm.style.display === 'none' ? 'block' : 'none';
+                var new_username = document.getElementById('new_username').value;
+                var new_email = document.getElementById('new_email').value;
+                var new_password = document.getElementById('new_password').value;
+                var current_password = document.getElementById('current_password').value;
+
+                fetch('/update_profile/', {
+                    method: 'PATCH', // Исправлено здесь
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        new_username: new_username,
+                        new_email: new_email,
+                        new_password: new_password,
+                        current_password: current_password
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Профиль успешно обновлен!');
+                        location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка при обновлении профиля:', error);
+                });
+            }
+
+        
+            // Функция для скрытия формы обновления профиля
+            function cancelUpdate() {
+                var updateForm = document.getElementById('updateProfileForm');
+                updateForm.style.display = 'none';
+                document.getElementById('new_username').value = '';
+                document.getElementById('new_email').value = '';
+                document.getElementById('new_password').value = '';
+            }
+        function updateTimers() {
+            const expirationElements = document.querySelectorAll('.note-expiration');
+            expirationElements.forEach((element) => {
+                const expirationDate = new Date(parseInt(element.dataset.expirationDate) * 1000);
+                const now = new Date();
+
+                if (now >= expirationDate) {
+                    element.textContent = 'Note expired';
+                } else {
+                    const diff = Math.floor((expirationDate - now) / 1000); // difference in seconds
+                    const days = Math.floor(diff / (60 * 60 * 24));
+                    const hours = Math.floor((diff % (60 * 60 * 24)) / (60 * 60));
+                    const minutes = Math.floor((diff % (60 * 60)) / 60);
+                    const seconds = diff % 60;
+
+                    element.textContent = `Note expires in ${days} days, ${hours} hours, ${minutes} minutes, and ${seconds} seconds`;
+            }
+        });
+    }
+
+    // Update timers every second
+    setInterval(updateTimers, 1000);
+        </script>
+{% endblock %}
+    

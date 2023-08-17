@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <style>
+        body {
+            background-color: rgb(240, 230, 140); /* Фон сайта */
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .header {
+            background-color: rgb(245, 255, 250, 0); /* Цвет хедера */
+            padding: 10px;
+            color: rgb(160, 82, 45); /* Цвет текста в хедере */
+            text-align: center;
+        } 
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+        }
+
+        .button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            color: white;
+            text-decoration: none; /* Убираем подчеркивание ссылок */
+        }
+
+        .button-register {
+            background-color: rgb(160, 82, 45, 0); /* Цвет кнопки Register */
+        }
+
+        .button-login {
+            background-color: rgb(160, 82, 45, 0); /* Цвет кнопки Login */
+        }
+
+        .button-profile {
+            background-color: rgb(160, 82, 45); /* Цвет кнопки Profile */
+        }
+
+        .button-new-note {
+            background-color: rgb(160, 82, 45); /* Цвет кнопки New Note */
+        }
+
+        .button-logout {
+            background-color: rgb(160, 82, 45); /* Цвет кнопки Logout */
+        }
+
+        .button-home {
+            background-color: rgb(160, 82, 45); /* Цвет кнопки Home */
+        }
+
+        .button-register:hover {
+            background-color: #68361f /* Цвет кнопки Register */
+        }
+
+        .button-login:hover {
+            background-color: #68361f; /* Цвет кнопки Login */
+        }
+
+        .button-profile:hover {
+            background-color: #68361f;; /* Цвет кнопки Profile */
+        }
+
+        .button-new-note:hover {
+            background-color: #68361f;; /* Цвет кнопки New Note */
+        }
+
+        .button-logout:hover {
+            background-color: #68361f;; /* Цвет кнопки Logout */
+        }
+
+        .button-home:hover {
+            background-color: #68361f;; /* Цвет кнопки Home */
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        {% if current_user.is_authenticated %}
+            <!-- Если пользователь залогинен, показываем кнопки "Profile", "New Note", "Home" и "Logout" -->
+            <a href="{{ url_for('update_profile') }}" class="button button-profile">Profile</a>
+            <a href="{{ url_for('new_note') }}" class="button button-new-note">New Note</a>
+            <a href="{{ url_for('logout') }}" class="button button-logout">Logout</a>
+        {% else %}
+            <!-- Если пользователь не залогинен, показываем кнопки "Register" и "Login" -->
+            <a href="{{ url_for('register') }}" class="button button-register">Register</a>
+            <a href="{{ url_for('login') }}" class="button button-login">Login</a>
+        {% endif %}
+        {% if current_user.is_authenticated %}
+            <!-- Показываем кнопку "Home" только если пользователь залогинен -->
+            <a href="{{ url_for('home') }}" class="button button-home">Home</a>
+        {% endif %}
+    </div>
+    <h1>{% block heading %}{% endblock %}</h1>
+    {% block content %}{% endblock %}
+</body>
+</html>
